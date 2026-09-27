@@ -1,0 +1,95 @@
+package com.termux.zerocore.config.ztcommand;
+
+
+import android.util.SparseArray;
+
+import com.termux.zerocore.config.ztcommand.config.ConfirmedDialogConfig;
+import com.termux.zerocore.config.ztcommand.config.ForWardOpenLeftConfig;
+import com.termux.zerocore.config.ztcommand.config.ForWardOpenRightConfig;
+import com.termux.zerocore.config.ztcommand.config.HelpConfig;
+import com.termux.zerocore.config.ztcommand.config.KnowConfig;
+import com.termux.zerocore.config.ztcommand.config.LnConfig;
+import com.termux.zerocore.config.ztcommand.config.OpenPageConfig;
+import com.termux.zerocore.config.ztcommand.config.QRCodeEncoderConfig;
+import com.termux.zerocore.config.ztcommand.config.RebootConfig;
+import com.termux.zerocore.config.ztcommand.config.ToastConfig;
+import com.termux.zerocore.config.ztcommand.config.VersionConfig;
+// X11 configs 已移除
+import com.termux.zerocore.config.ztcommand.config.XmlMenuConfig;
+import com.termux.zerocore.config.ztcommand.config.ZTBackgroundImageConfig;
+import com.termux.zerocore.config.ztcommand.config.ZTConfig;
+import com.termux.zerocore.config.ztcommand.config.ZTKeyConstants;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class ZTCommandConfigStore {
+    private static final SparseArray<ZTConfig> sparse_array_config = new SparseArray<>();
+    private static final Map<String, Integer> map_array_command = new HashMap<>();
+    static {
+        // 需要在此添加命令，否则找不到config
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_TOAST, ZTKeyConstants.ZT_ID_TOAST);
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_HELP, ZTKeyConstants.ZT_ID_HELP);
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_KNOW, ZTKeyConstants.ZT_ID_KNOW);
+
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_VERSION, ZTKeyConstants.ZT_ID_VERSION);
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_VERSION_1, ZTKeyConstants.ZT_ID_VERSION);
+
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_LEFT, ZTKeyConstants.ZT_ID_LEFT);
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_LEFT_1, ZTKeyConstants.ZT_ID_LEFT);
+
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_RIGHT, ZTKeyConstants.ZT_ID_RIGHT);
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_RIGHT_1, ZTKeyConstants.ZT_ID_RIGHT);
+
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_REBOOT, ZTKeyConstants.ZT_ID_REBOOT);
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_REBOOT_1, ZTKeyConstants.ZT_ID_REBOOT);
+
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_LN, ZTKeyConstants.ZT_ID_LN);
+        // X11 命令映射已移除
+
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_CONFIRMED_DIALOG, ZTKeyConstants.ZT_ID_CONFIRMED_DIALOG);
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_QR_CODE_ENCODER_CONFIG, ZTKeyConstants.ZT_ID_QR_CODE_ENCODER_CONFIG);
+
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_BACKGROUND_IMAGE, ZTKeyConstants.ZT_ID_BACKGROUND_IMAGE);
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_BACKGROUND_IMAGE_1, ZTKeyConstants.ZT_ID_BACKGROUND_IMAGE);
+
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_MENU, ZTKeyConstants.ZT_ID_MENU);
+
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_OPEN_PAGE, ZTKeyConstants.ZT_ID_OPEN_PAGE);
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_OPEN_PAGE_1, ZTKeyConstants.ZT_ID_OPEN_PAGE);
+
+        // 需要在此添加你的config，否则找不到config
+        register(new ToastConfig());
+        register(new HelpConfig());
+        register(new KnowConfig());
+        register(new VersionConfig());
+        register(new ForWardOpenRightConfig());
+        register(new ForWardOpenLeftConfig());
+        register(new XmlMenuConfig());
+        register(new RebootConfig());
+        register(new LnConfig());
+        // X11 config 注册已移除
+        register(new ConfirmedDialogConfig());
+        register(new QRCodeEncoderConfig());
+        register(new ZTBackgroundImageConfig());
+        register(new OpenPageConfig());
+    }
+    private static void register(ZTConfig ztConfig) {
+        sparse_array_config.append(ztConfig.getId(), ztConfig);
+    }
+
+    public static ZTConfig getConfig(String command) {
+        Integer id = map_array_command.get(command);
+        try {
+            ZTConfig ztConfig = sparse_array_config.get(id);
+            if (ztConfig == null) {
+                return new KnowConfig();
+            }
+            return ztConfig;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new KnowConfig();
+    }
+
+}
